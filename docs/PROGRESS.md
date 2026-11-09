@@ -48,3 +48,14 @@
 - 測試結果：同步最新 main 後 node --test 49/49 通過（含階段 1）；Chromium 元件點選／重整還原與 git diff --check 通過。
 - 與計畫書不同的地方：前段「尚無階段 1」僅指當時本地檢出狀態，遠端階段 1 已完成，現已納入。
 - 下一階段注意事項：先設定 null 數值並註冊區域處理器；本 PR 不合併或部署。
+
+## 題庫補強 A（2026-11-10）
+- 完成內容：圖片題題幹選填與縮圖預覽；兩層資料夾、題數／聯合篩選、表單指定／勾選搬題、改名與確認刪除；四題型 CSV 空白範本、逐列驗證／確認匯入，失敗停止並提示成功筆數。
+- 新增 `js/systems/question-folders.js`：`validateFolderName(name,siblings?) → {ok,name,errors}`、`buildFolderTree(folders,questions) → tree[]`（count 含子層、directCount 為本層）、`resolveFolderPath(path,folders) → {ok,folderId?,missing?,errors?}`、`getFolderQuestions(folderId,folders,questions) → Question[]`；null／孤兒 id 視為未分類。
+- 新增 `js/systems/question-csv.js`：`buildTemplate(type) → BOM字串`、`parseCsv(text) → string[][]`（每列具非列舉 rowNumber）、`parseQuestionCsv(text,{imageFiles?,maxImageBytes?}?) → {type,rows,errors}`、`validateImageFile(file,maxImageBytes?) → void`（不合法拋錯）；匯出 CSV_HEADERS／DEFAULT_MAX_IMAGE_BYTES，純解析不寫 DB。
+- `question-repo.js` 新增 Promise API：`listFolders() → Folder[]`、`saveFolder(folder) → Folder`、`removeFolder(id) → void`、`moveQuestions(ids,folderId) → void`；刪資料夾的搬題與刪除同交易，失敗全部回滾；JSON 加入 folders 並相同 id 合併，舊備份仍相容。
+- contentDB 版本 1→2，匯出 `CONTENT_DB_VERSION=2`、`CONTENT_DB_STORES=['questions','images','folders']`；只建立缺少的 store，保留既有資料；folders 存 `{id,name,parentId,createdAt,updatedAt}`，不新增 localStorage 欄位或資料遷移。
+- balance 僅新增 `questions.maxImageBytes:null` 並補同層 _note；null 使用 5MB，表單與 CSV 共用限制。怪物題數仍計算全部題目。
+- 測試結果：`node --test` 72/72 通過（原有測試保留）；`git diff --check` 通過；Chromium 驗證 v1 資料保留升級、範本下載、資料夾／搬題／刪除、無題幹圖片、CSV 取消零寫入／新增不覆蓋／圖片比對／中途失敗計數、重整保留與手機無溢出，無 pageerror。
+- 與計畫書不同的地方：依使用者補充，是非 CSV 標題改為 `folder,prompt,is_true`，填充維持 `folder,prompt,answer`，嚴格由標題辨識；未修改 PLAN 或正式階段編號，探險圖片檢視器本次不做。
+- 對階段 3 的注意事項：圖片題可能無題幹；圖片檢視器規格見 PLAN 第 6 章；資料夾僅整理，不影響出題與怪物可用題數；未決 balance 數值仍待設定。
