@@ -1,8 +1,9 @@
 export const PREFIX = 'edia-rpg-v1';
 export const SAVE_KEY = `${PREFIX}:save`;
-export const SCHEMA_VERSION = 1;
-export const migrations = []; // Entries: { from, to, migrate(save) }; append when adding v2.
-export const createDefaultSave = () => ({ schemaVersion: 1, settings: { fontScale: 1 }, currencies: { stars: 0 } });
+export const SCHEMA_VERSION = 2;
+const resources = () => ({ stars: 0, shards: {}, exp: 0, vouchers: 0, gems: {}, ownedItems: {}, grantedIds: [], pendingDraw: null });
+export const migrations = [{ from: 1, to: 2, migrate: save => ({ ...resources(), ...save, stars: save.currencies.stars, schemaVersion: 2 }) }];
+export const createDefaultSave = () => ({ schemaVersion: SCHEMA_VERSION, settings: { fontScale: 1 }, currencies: { stars: 0 }, ...resources() });
 const clone = value => structuredClone(value);
 const plain = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 function safeTree(value) {
@@ -18,6 +19,20 @@ export function validateSave(save) {
   if (!plain(save) || save.schemaVersion !== SCHEMA_VERSION || !plain(save.settings) ||
       ![0.875, 1, 1.125, 1.25].includes(save.settings.fontScale) || !plain(save.currencies) ||
       !Number.isSafeInteger(save.currencies.stars) || save.currencies.stars < 0) throw new Error('存檔格式不正確');
+  const count = n => Number.isSafeInteger(n) && n >= 0;
+  if (![save.stars, save.exp, save.vouchers].every(count) ||
+      !plain(save.shards) || !Object.values(save.shards).every(count) ||
+      !plain(save.gems) || !Object.values(save.gems).every(group => plain(group) && Object.values(group).every(count)) ||
+      !plain(save.ownedItems) || !Object.values(save.ownedItems).every(value => typeof value === 'boolean') ||
+      !Array.isArray(save.grantedIds) || !save.grantedIds.every(id => typeof id === 'string' && id.length > 0) ||
+      !(save.pendingDraw === null || (plain(save.pendingDraw) && typeof save.pendingDraw.drawId === 'string' && save.pendingDraw.drawId.length > 0 &&
+        ['reward', 'accessory'].includes(save.pendingDraw.mode) &&
+        Array.isArray(save.pendingDraw.cards) && save.pendingDraw.cards.length === 3 &&
+        typeof save.pendingDraw.resolved === 'boolean' &&
+        (!save.pendingDraw.resolved || Array.isArray(save.pendingDraw.result)) &&
+        (save.pendingDraw.resolved || save.pendingDraw.pickedIndex === null) &&
+        (save.pendingDraw.mode !== 'reward' || save.pendingDraw.cards.every(card => plain(card) && plain(card.bundle) && Array.isArray(card.bundle.items) && plain(card.bundle.meta))) &&
+        (save.pendingDraw.pickedIndex === null || [0, 1, 2].includes(save.pendingDraw.pickedIndex))))) throw new Error('資源或抽牌存檔格式不正確');
   return save;
 }
 export function migrateSave(input, steps = migrations) {

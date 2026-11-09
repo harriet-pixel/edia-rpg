@@ -29,3 +29,22 @@
 - 測試結果：`node --test` 35/35（原有 18 個全通過）；`git diff --check` 通過；Chromium 驗證四題型 CRUD、篩選、圖片刪除、JSON 往返／略過／合併、重整保留、手機無水平溢出與寫入失敗提示，無 pageerror。
 - 與計畫書不同的地方：補明未定義的序列化約定：createdAt／updatedAt 使用非負毫秒時間戳，圖片題 answer 為 null、自評輸入 boolean；recentWindow 待設定時只避免連續同題，未擅定視窗值。
 - 下一階段注意事項：先載入 balance；monsterMinPool 為 null 時怪物不可用，仍須設定門檻／視窗；monster 題池必走 getPool，圖片自評用 true／false；題庫 JSON 與設定頁存檔 JSON 分開匯出。
+
+## 階段 2：貨幣、物品、獎勵引擎、三選一元件（2026-11-10）
+- 完成內容：共用獎勵包、六種核心獎勵、區域處理器介面、原子發放／grantId 冪等、來源限定修飾器；三選一與配件抽卡先存後顯示、重整還原、全收集補償、兌換券判斷。
+- `js/systems/rewards.js`：`grant(state,bundle,ctx={grantId,items?,modifiers?,commit?}) → {ok,state,applied,errors}`；純計算後可用 commit 一次寫入；`registerRewardHandler(type,fn(draft,item,meta)) → unsubscribe`，處理器須同步且只修改 draft 或回傳新狀態。
+- `js/systems/draw.js`：`drawThree(tableId,ctx={tables,balance,rng,regionId,storyEnabled}) → {ok,cards,errors}`；`loadDrawTables(fetcher?) → Promise<tables>`；資料由 loader 載入後注入純函式，null 回報「待設定」。
+- 同模組：`drawAccessory(state,ctx={items,balance,rng}) → rewardItem`；`createDrawEngine(store,ctx) → {begin(drawId,tableId,options?),pickCard(drawId,index),restore()}`；begin 回傳 pendingDraw 或錯誤，pickCard 回傳 grant 結果；配件 tableId 為 accessory，options.source 為 boss／levelUp。
+- `js/systems/catalog.js`：`getUnownedGeneralItems(items,owned,filter?) → items[]`（filter 為 predicate）、`loadCatalog(fetcher?) → Promise<items>`；`js/systems/inventory.js`：`canUseVoucher(state,items) → boolean`、`getInventory(items,owned) → [{...item,owned}]`。
+- `js/ui/card-picker.js`：`mountCardPicker(container,{engine,store,cardBackSrc?}) → cleanup`；`currency-bar.js`：`mountCurrencyBar(container,store,regionId或函式) → unsubscribe`；`reward-feedback.js`：`presentGrant(result) → close`，統一 toast；新增獨立 CSS，未改既有頁面。
+- 資料／存檔：新增 draw-tables.json 四表與 items.json 八件最小配件；balance 新增 drawTables、accessoryPool、accessoryFallbackStars；schema 1→2 遷移保留舊資料，新增 stars/shards/exp/vouchers/gems/ownedItems/grantedIds/pendingDraw，保留 currencies.stars 相容欄位。
+- 測試結果：`node --test` 32/32 通過；Chromium 手機 viewport 實測缺圖占位、點選、toast、貨幣列及重整保留配件結果通過；`git diff --check` 通過。
+- 與計畫書不同的地方：專案尚無階段 1 檔案／紀錄，本階段未依賴或補做題庫；依 Prompt 抽牌數量與未決權重維持 null，測試注入設定值；僅因 schema 升版修改階段 0 存檔層與遷移測試，store 等其餘底層不動。
+- 下一階段注意事項：區域系統先註冊 progress/taskItem/magicStone 處理器；正式抽牌先補齊 null 數量／權重（通關前進度量依表為 ×1／×1、×1／×2）；頁面掛載新元件，所有 grant 結果交 presentGrant，後續技能只傳 modifiers，升等計算未實作。
+
+## 階段 2：提交前驗證（2026-11-10）
+- 完成內容：重新驗證階段 2，準備提交與目標 main 的 PR；遠端 main 已包含階段 1，本次以最新 main 為基底保留其全部變更。
+- 新增對外函式：無；沿用上段所列階段 2 API。
+- 測試結果：同步最新 main 後 node --test 49/49 通過（含階段 1）；Chromium 元件點選／重整還原與 git diff --check 通過。
+- 與計畫書不同的地方：前段「尚無階段 1」僅指當時本地檢出狀態，遠端階段 1 已完成，現已納入。
+- 下一階段注意事項：先設定 null 數值並註冊區域處理器；本 PR 不合併或部署。

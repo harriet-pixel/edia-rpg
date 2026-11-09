@@ -1,0 +1,130 @@
+{
+  "pre_small": [
+    {
+      "kind": "star",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "progress",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "progress",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    }
+  ],
+  "pre_big": [
+    {
+      "kind": "star",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "progress",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "progress",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    }
+  ],
+  "post_small": [
+    {
+      "kind": "star",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "star",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "taskItem",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    }
+  ],
+  "post_big": [
+    {
+      "kind": "star",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "regional",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    },
+    {
+      "kind": "shard",
+      "amountOptions": [
+        {
+          "amount": null,
+          "weight": null
+        }
+      ],
+      "weight": null
+    }
+  ]
+}
