@@ -1,0 +1,13 @@
+{
+  "questions": {"_note": "各遭遇題數、最低可用題數與避免重複範圍待設定。", "adventure": null, "small": null, "big": null, "boss": null, "minimumAvailable": null, "recentWindow": null},
+  "monsterHp": {"_note": "小怪、大怪與 Boss HP 待設定。", "small": null, "big": null, "boss": null},
+  "draw": {"_note": "通關後大怪魔法石 60%、道具 40%，數量 1 或 2 各半；其餘機率與數量待設定。", "postClearBig": {"magicStone": 0.6, "questItem": 0.4, "quantityOne": 0.5, "quantityTwo": 0.5}, "starsAmount": null, "accessoryWeights": {"hair": null, "eyes": null, "clothes": null, "pet": null}},
+  "prices": {"_note": "一般配件、碎片、套裝與進化價格待設定。", "accessories": null, "fragmentStars": null, "outfitFragments": null, "evolution": null},
+  "fragments": {"_note": "碎片每日購買上限待設定。", "dailyPurchaseLimit": null},
+  "npc": {"_note": "各區通用任務道具交換碎片比例待設定。", "itemsRequired": null, "fragmentsReceived": null},
+  "affinity": {"_note": "各級親密度門檻、事件門檻及每次增加點數待設定。", "thresholds": null, "eventThresholds": null, "pointsPerEncounter": null},
+  "skills": {"_note": "依親密度變化的三項技能機率待設定。", "starDouble": null, "extraDamage": null, "fragmentDouble": null},
+  "gems": {"_note": "掉落率及普通、稀有、傳說機率待設定。", "dropChance": null, "common": null, "rare": null, "legendary": null},
+  "exp": {"_note": "PLAN 第 12 章起始值；無每日上限。", "adventure": 5, "chanceOrFate": 3, "smallVictory": 8, "bigVictory": 15, "firstBossVictory": 50, "repeatBossVictory": 25, "dailyCap": null},
+  "leveling": {"_note": "需求 = base + increment × (目前等級 - 1)；每級星星 10，里程碑配件全擁有補償 30；稱號待設定。", "base": 20, "increment": 10, "starsPerLevel": 10, "milestones": [5, 10, 15, 20, 25, 30], "accessoryFallbackStars": 30, "titles": null}
+}
