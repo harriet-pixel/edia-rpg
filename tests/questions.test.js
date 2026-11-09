@@ -6,7 +6,7 @@ const base = { id: 'q', prompt: 'Question?', createdAt: 1, updatedAt: 2 };
 const samples = [ { ...base, type: 'image', imageKey: 'img', answer: null }, { ...base, type: 'choice', options: ['A', 'B'], answer: 'A' }, { ...base, type: 'truefalse', answer: false }, { ...base, type: 'fill', answer: 'New York | NYC' } ];
 for (const q of samples) test(`validate ${q.type}: valid and invalid`, () => {
   assert.equal(validateQuestion(q).ok, true);
-  for (const patch of [{ id: '' }, { prompt: ' ' }, { createdAt: 'yesterday' }, { updatedAt: -1 }, { type: 'other' }, { answer: undefined }]) assert.equal(validateQuestion({ ...q, ...patch }).ok, false);
+  for (const patch of [{ id: '' }, ...(q.type === 'image' ? [] : [{ prompt: ' ' }]), { createdAt: 'yesterday' }, { updatedAt: -1 }, { type: 'other' }, { answer: undefined }]) assert.equal(validateQuestion({ ...q, ...patch }).ok, false);
 });
 test('validation rejects malformed options, answers, image references and containers', () => {
   for (const value of [null, undefined, [], 'q', {}, { ...samples[0], imageKey: '' }, { ...samples[1], options: ['A'] }, { ...samples[1], answer: 'C' }, { ...samples[1], options: ['A', 'A'] }, { ...samples[2], answer: 'true' }, { ...samples[3], answer: 'a||b' }, { ...base, type: 'fill', answer: 7 }]) assert.equal(validateQuestion(value).ok, false);
@@ -50,4 +50,15 @@ test('pickMany unique ids, exhausted/small pools and no consecutive repeats', ()
 });
 test('null and zero windows do not crash or consecutively repeat when avoidable', () => {
   for (const recentWindow of [null, 0]) { const picker = createQuestionPicker({ recentWindow, rng: createRng(3) }); let last; for (let i = 0; i < 10; i++) { const q = picker.pick(pool); assert.notEqual(q.id, last); last = q.id; } }
+});
+
+test('image prompt is optional; imageKey and non-image prompts stay mandatory', () => {
+  for (const prompt of ['', ' ', undefined]) assert.equal(validateQuestion({ ...samples[0], prompt }).ok, true);
+  const { prompt, ...image } = samples[0]; assert.equal(validateQuestion(image).ok, true);
+  assert.equal(validateQuestion({ ...image, imageKey: undefined }).ok, false);
+  for (const q of samples.slice(1)) assert.equal(validateQuestion({ ...q, prompt: undefined }).ok, false);
+  assert.equal(validateQuestion({ ...samples[1], answer: 'absent' }).ok, false);
+});
+test('monster availability ignores folder memberships', () => {
+  assert.equal(getMonsterAvailability(samples.map(q => ({ ...q, folderId: 'orphan' })), { questions: { monsterMinPool: 3 } }).available, true);
 });

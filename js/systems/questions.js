@@ -8,7 +8,8 @@ export function validateQuestion(q) {
   if (!q || typeof q !== 'object' || Array.isArray(q)) return { ok: false, errors: ['題目必須是物件'] };
   if (!text(q.id)) errors.push('缺少 id');
   if (!types.includes(q.type)) errors.push('未知題型');
-  if (!text(q.prompt)) errors.push('題幹不可空白');
+  if (q.type !== 'image' && !text(q.prompt)) errors.push('題幹不可空白');
+  if (q.type === 'image' && q.prompt != null && typeof q.prompt !== 'string') errors.push('題幹必須是文字');
   for (const key of ['createdAt', 'updatedAt']) if (!Number.isSafeInteger(q[key]) || q[key] < 0) errors.push(`${key} 必須是非負毫秒時間戳`);
   if (q.updatedAt < q.createdAt) errors.push('更新時間不可早於建立時間');
   if (q.type === 'choice' && (!Array.isArray(q.options) || q.options.length < 2 || !q.options.every(text) || new Set(q.options).size !== q.options.length || !q.options.includes(q.answer))) errors.push('選項至少兩個且不重複，答案須為其中之一');

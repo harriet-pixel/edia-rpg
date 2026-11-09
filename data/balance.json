@@ -1,13 +1,14 @@
 {
   "questions": {
-    "_note": "各遭遇題數待設定；monsterMinPool 為怪物最低可用題數，recentWindow 為記憶體近期避重視窗，null 表示待設定；minimumAvailable 保留相容。",
+    "_note": "各遭遇題數待設定；monsterMinPool 為怪物最低可用題數，recentWindow 為記憶體近期避重視窗，null 表示待設定；minimumAvailable 保留相容；maxImageBytes 為圖片檔大小上限，null 時使用 5MB（5 × 1024 × 1024 bytes）。",
     "adventure": null,
     "small": null,
     "big": null,
     "boss": null,
     "monsterMinPool": null,
     "minimumAvailable": null,
-    "recentWindow": null
+    "recentWindow": null,
+    "maxImageBytes": null
   },
   "monsterHp": {
     "_note": "小怪、大怪與 Boss HP 待設定。",

@@ -92,14 +92,16 @@ export const getStorage = () => defaultStorage ??= createStorage();
 export const exportSave = () => getStorage().exportSave();
 export const importSave = json => getStorage().importSave(json);
 
+export const CONTENT_DB_VERSION = 2;
+export const CONTENT_DB_STORES = Object.freeze(['questions', 'images', 'folders']);
 export function createIndexedDB({ indexedDB = globalThis.indexedDB } = {}) {
   let opening;
   function open() {
     if (!indexedDB) return Promise.reject(new Error('IndexedDB 不可用'));
     if (!opening) opening = new Promise((resolve, reject) => {
-      const request = indexedDB.open(`${PREFIX}:content`, 1);
+      const request = indexedDB.open(`${PREFIX}:content`, CONTENT_DB_VERSION);
       request.onupgradeneeded = () => {
-        for (const name of ['questions', 'images']) if (!request.result.objectStoreNames.contains(name)) request.result.createObjectStore(name);
+        for (const name of CONTENT_DB_STORES) if (!request.result.objectStoreNames.contains(name)) request.result.createObjectStore(name);
       };
       request.onerror = () => { opening = undefined; reject(request.error); };
       request.onblocked = () => { opening = undefined; reject(new Error('IndexedDB 升級被其他分頁阻擋')); };
