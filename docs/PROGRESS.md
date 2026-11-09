@@ -5,8 +5,6 @@
 
 ---
 
-（尚未開始。階段 0 完成後在此追加第一段。）
-
 ## 階段 0：骨架、存檔、設定與 UI（2026-11-09）
 - 完成內容：GitHub Pages 外殼、hash 路由、手機底部五分頁／桌面側欄、更多清單、施工占位頁；設定支援四檔字級與 JSON 匯出入，未加入玩法。
 - 新增檔案與對外函式：`index.html`、`js/app.js`、`css/{tokens,base,components}.css`、`js/pages/*.js` 的 `render(context) → Element`；Huninn 2.1 與授權自託管。
