@@ -18,3 +18,14 @@
 - 測試結果：`node --test` 18/18 通過，涵蓋前綴、損毀備份、讀寫失敗、v0→v1、匯入保護、狀態訂閱、事件、亂數與設定；git diff --check 通過。瀏覽器預覽 relay port 4173 逾時，重試仍失敗，手機畫面／字級重整／下載再匯入的瀏覽器驗收尚未完成。
 - 與計畫書不同的地方：依本次 Prompt，前綴使用 edia-rpg-v1（PLAN／AGENTS 為 idea-rpg-v1）；備份操作統一放設定頁；未決數值維持 null，exp.dailyCap 的 null 表示依 PLAN 不設上限；無額外 JSON 套件或部署設定。
 - 下一階段注意事項：階段 1 依賴 contentDB、store、config、rng 與缺圖／提示 UI；階段 2 依賴 store、config、rng、events、modal 與貨幣列。UI 匯入應走 `getStore().importSave(json)` 以同步狀態與訂閱；新增 schema 欄位時維護驗證與 migrations；後續獎勵仍須集中走 grant()。
+
+## 階段 1：我的題庫與出題器（2026-11-09）
+- 完成內容：四題型新增／編輯／刪除、篩選與計數、怪物門檻提示、圖片上傳／缺圖占位、JSON 合併匯入前驗證與確認；圖片與題目同交易，失敗 toast，不新增存檔欄位。
+- 新增檔案與對外函式：`js/systems/questions.js`：`validateQuestion(q) → {ok,errors}`、`checkAnswer(q,input) → boolean`、`getPool(questions,mode) → Question[]`、`getMonsterAvailability(questions,config?) → {available,count,min,reason?}`。
+- 同模組：`createQuestionPicker({rng?,recentWindow?}?) → {pick(pool),pickMany(pool,n)}`；空池 pick 回傳 undefined，pickMany 不超過池內唯一 id 數；近期紀錄只在記憶體。
+- `js/systems/question-repo.js`：`createQuestionRepo({db?}?) / questionRepo → {list(),get(id),save(q,imageData?),remove(id),getImage(key),exportAll(),importAll(json)}`，皆 Promise；save 回題目、exportAll 回 JSON 字串、importAll 回 `{imported,skipped}`。
+- 同模組：`parseQuestionImport(json) → {questions,images,skipped}`、`isImageDataURL(value) → boolean`；JSON 格式 `{version:1,questions:[],images:{imageKey:dataURL}}`，匯入圖片鍵衝突時重配以保護其他題目。
+- 更新檔案：`js/pages/bank.js` 的 `render() → Element`；balance 新增 `questions.monsterMinPool:null`，沿用 `recentWindow:null` 並補 _note；未改共用底層與其他頁面。
+- 測試結果：`node --test` 35/35（原有 18 個全通過）；`git diff --check` 通過；Chromium 驗證四題型 CRUD、篩選、圖片刪除、JSON 往返／略過／合併、重整保留、手機無水平溢出與寫入失敗提示，無 pageerror。
+- 與計畫書不同的地方：補明未定義的序列化約定：createdAt／updatedAt 使用非負毫秒時間戳，圖片題 answer 為 null、自評輸入 boolean；recentWindow 待設定時只避免連續同題，未擅定視窗值。
+- 下一階段注意事項：先載入 balance；monsterMinPool 為 null 時怪物不可用，仍須設定門檻／視窗；monster 題池必走 getPool，圖片自評用 true／false；題庫 JSON 與設定頁存檔 JSON 分開匯出。

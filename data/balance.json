@@ -1,5 +1,5 @@
 {
-  "questions": {"_note": "各遭遇題數、最低可用題數與避免重複範圍待設定。", "adventure": null, "small": null, "big": null, "boss": null, "minimumAvailable": null, "recentWindow": null},
+  "questions": {"_note": "各遭遇題數待設定；monsterMinPool 為怪物最低可用題數，recentWindow 為記憶體近期避重視窗，null 表示待設定；minimumAvailable 保留相容。", "adventure": null, "small": null, "big": null, "boss": null, "monsterMinPool": null, "minimumAvailable": null, "recentWindow": null},
   "monsterHp": {"_note": "小怪、大怪與 Boss HP 待設定。", "small": null, "big": null, "boss": null},
   "draw": {"_note": "通關後大怪魔法石 60%、道具 40%，數量 1 或 2 各半；其餘機率與數量待設定。", "postClearBig": {"magicStone": 0.6, "questItem": 0.4, "quantityOne": 0.5, "quantityTwo": 0.5}, "starsAmount": null, "accessoryWeights": {"hair": null, "eyes": null, "clothes": null, "pet": null}},
   "prices": {"_note": "一般配件、碎片、套裝與進化價格待設定。", "accessories": null, "fragmentStars": null, "outfitFragments": null, "evolution": null},
