@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { PREFIX, SAVE_KEY, createStorage, createDefaultSave, migrateSave, createIndexedDB } from '../js/core/storage.js';
+import { PREFIX, SAVE_KEY, createStorage, createDefaultSave, migrateSave, createIndexedDB, SCHEMA_VERSION, migrations } from '../js/core/storage.js';
 export function backend() { const data = new Map(); return { data, getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) }; }
 test('prefix and synchronous read/write roundtrip', () => {
   const disk = backend(), save = createStorage({ backend: disk });
@@ -27,11 +27,11 @@ test('corruption backup survives even when persistent backup write fails', () =>
   const save = createStorage({ backend: { getItem: () => 'raw', setItem() { throw Error(); } } });
   assert.equal(save.getMemoryBackup(save.backupKeys()[0]), 'raw');
 });
-test('fake v0 to v1 migration runs on load and import and persists v1', () => {
+test('custom v0 to v1 migration chains through current schema on load and import', () => {
   const disk = backend(); disk.data.set(SAVE_KEY, JSON.stringify({ schemaVersion: 0, stars: 7 }));
-  const steps = [{ from: 0, to: 1, migrate: old => ({ ...createDefaultSave(), currencies: { stars: old.stars } }) }];
-  const save = createStorage({ backend: disk, migrationSteps: steps }); assert.equal(save.load().currencies.stars, 7);
-  assert.equal(JSON.parse(disk.data.get(SAVE_KEY)).schemaVersion, 1);
+  const steps = [{ from: 0, to: 1, migrate: old => ({ schemaVersion: 1, settings: { fontScale: 1 }, currencies: { stars: old.stars } }) }];
+  const save = createStorage({ backend: disk, migrationSteps: [...steps, ...migrations] }); assert.equal(save.load().currencies.stars, 7);
+  assert.equal(JSON.parse(disk.data.get(SAVE_KEY)).schemaVersion, SCHEMA_VERSION);
   save.importSave('{"schemaVersion":0,"stars":4}'); assert.equal(save.load().currencies.stars, 4);
   assert.throws(() => migrateSave({ schemaVersion: 0 }));
   assert.throws(() => migrateSave({ schemaVersion: 0 }, [{ from: 0, to: 1, migrate: s => s }]));

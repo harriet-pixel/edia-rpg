@@ -1,0 +1,58 @@
+[
+  {
+    "id": "hair-1",
+    "type": "hair",
+    "name": "髮型 1",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "hair-2",
+    "type": "hair",
+    "name": "髮型 2",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "eyes-1",
+    "type": "eyes",
+    "name": "眼睛 1",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "eyes-2",
+    "type": "eyes",
+    "name": "眼睛 2",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "outfit-1",
+    "type": "outfit",
+    "name": "衣服 1",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "outfit-2",
+    "type": "outfit",
+    "name": "衣服 2",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "pet-1",
+    "type": "pet",
+    "name": "普通寵物 1",
+    "general": true,
+    "image": null
+  },
+  {
+    "id": "pet-2",
+    "type": "pet",
+    "name": "普通寵物 2",
+    "general": true,
+    "image": null
+  }
+]
